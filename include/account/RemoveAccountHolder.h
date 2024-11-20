@@ -1,0 +1,6 @@
+#ifndef REMOVEACCOUNTHOLDER_H
+#define REMOVEACCOUNTHOLDER_H
+
+#include "AccountHolder.h"
+
+#endif // REMOVEACCOUNTHOLDER_H
