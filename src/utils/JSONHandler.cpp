@@ -1,5 +1,4 @@
-#include "JSONHandler.h"
-#include <iostream>
+#include "../../include/JSONHandler.h"
 #include <fstream>
 #include <nlohmann/json.hpp>
 
@@ -8,56 +7,90 @@ using json = nlohmann::json;
 
 namespace JSONHandler {
 
+    // Load branches data from JSON files
     void loadBranchesFromFile(const string& filename, Branch*& head) {
-        ifstream file(filename);
+        if (!filesystem::exists(filename)) {
+                cerr << "Warning: File " << filename << " does not exist. Creating a new file.\n";
+                ofstream newFile(filename);
+                return;
+        }
+
         json data;
         file >> data;
-        
+
         for (const auto& item : data) {
-            addBranch(head, item["id"], item["name"], item["location"]);
+            Branch* newBranch = new Branch(
+                item["id"].get<string>(),
+                item["name"].get<string>(),
+                item["manager"].get<string>()
+            );
+            newBranch->setNextBranch(head);
+            head = newBranch;
         }
     }
 
+    // Save branches data to JSON file
     void saveBranchesToFile(const string& filename, Branch* head) {
+        if (!filesystem::exists(filename)) {
+                cerr << "Warning: File " << filename << " does not exist. Creating a new file.\n";
+                ofstream newFile(filename);
+                return;
+        }
+        
         json data;
         Branch* temp = head;
         while (temp != nullptr) {
             data.push_back({
-                {"id", temp->id},
-                {"name", temp->name},
-                {"location", temp->location}
+                {"id", temp->getId()},
+                {"name", temp->getName()},
+                {"manager", temp->getManager()}
             });
-            temp = temp->next;
+            temp = temp->getNextBranch();
         }
-        ofstream file(filename);
         file << data.dump(4);
     }
 
+    // Load account data from JSON files
     void loadAccountHoldersFromFile(const string& filename, AccountHolder*& head) {
-        ifstream file(filename);
+        if (!filesystem::exists(filename)) {
+                cerr << "Warning: File " << filename << " does not exist. Creating a new file.\n";
+                ofstream newFile(filename);
+                return;
+        }
+
         json data;
         file >> data;
 
         for (const auto& item : data) {
-            addAccountHolder(head, item["id"], item["name"], item["address"], item["balance"]);
+            AccountHolder* newAccount = new AccountHolder(
+                item["id"].get<string>(),
+                item["name"].get<string>(),
+                item["balance"].get<double>()
+            );
+            newAccount->setNextAccount(head);
+            head = newAccount;
         }
     }
 
+    // Save account data to JSON file
     void saveAccountHoldersToFile(const string& filename, AccountHolder* head) {
+        if (!filesystem::exists(filename)) {
+                cerr << "Warning: File " << filename << " does not exist. Creating a new file.\n";
+                ofstream newFile(filename);
+                return;
+        }
+
         json data;
         AccountHolder* temp = head;
         while (temp != nullptr) {
             data.push_back({
-                {"id", temp->id},
-                {"name", temp->name},
-                {"address", temp->address},
-                {"balance", temp->balance}
+                {"id", temp->getId()},
+                {"name", temp->getName()},
+                {"balance", temp->getBalance()}
             });
-            temp = temp->next;
+            temp = temp->getNextAccount();
         }
-        ofstream file(filename);
         file << data.dump(4);
     }
 
 }
-

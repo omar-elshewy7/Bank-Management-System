@@ -8,9 +8,9 @@ using namespace std;
 int main() {
 
 
-    // Load data from files
-    // JSONHandler::loadBranchesFromFile("data/branches.json", branches);
-    // JSONHandler::loadAccountHoldersFromFile("data/account_holders.json", accountHolders);
+    // Load data from JSON files
+    JSONHandler::loadBranchesFromFile("data/branches.json", ranches);
+    JSONHandler::loadAccountHoldersFromFile("data/account_holders.json", AccountHolders);
 
 
 
